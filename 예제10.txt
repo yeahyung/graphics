@@ -1,0 +1,77 @@
+// ConsoleApplication2.cpp: 콘솔 응용 프로그램의 진입점을 정의합니다.
+//
+#include "stdafx.h"
+#include<glut.h>
+#include<stdlib.h>
+#include<time.h>
+#include<math.h>
+#include<stdio.h>
+static int delay = 100;
+#define PI 3.1415926535897
+void init();
+void display();
+void timer(int);
+GLfloat angle = 0;
+int angleInc = -5;
+unsigned char frame[240][416];
+int main(int argc, char *argv[])
+{
+	glutInit(&argc, (char**)argv); // 초기화
+	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
+	glutInitWindowSize(500, 500); // 윈도우크기초기화(도화지크기)(실행하면 나오는 화면)
+	glutCreateWindow("Prog03 : Bouncing Pixel"); // 윈도우생성 
+	glutTimerFunc(delay, timer, 0);
+	glutDisplayFunc(display);  // os가 언제 화면을 보여줄지(parameter를 그릴것)
+	
+
+	init(); // openGL 초기화
+	glutMainLoop(); // event queue에 어떤 event가 들어있는지 검사하는 loop시작
+
+	return 0;
+}
+
+void init() { // openGL 초기화
+	srand(time(0));
+
+	glClearColor(1.0, 1.0, 1.0, 1.0); // (r g b a(투명도)(1이 불투명)순서)(1이 최대값 가장 강한 색)
+									  //glColor3f(1.0, 0.0, 0.0); // 붓의 색 선택(1 0 0 --> 빨간색)
+	glOrtho(0.0,416.0,0.0,240.0,-500.0,500.0); // 좌표계 크기 설정 (left,right,bottom,top)
+								  //화면에보이는 좌표 범위 
+	glPointSize(8);
+	//glEnable(GL_DEPTH_TEST);   // 테스트한 결과는 DEPTH_BUFFER에 저장된다.
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	FILE *fp;
+	fopen_s(&fp, "testo.y", "rb");
+	fread(frame, 416 * 240, sizeof(char), fp);
+	fclose(fp);
+}
+
+void display() {
+	GLfloat x, y, z;
+	
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glBegin(GL_POINTS);
+	for (int i = 0; i < 240; i++) {
+		for (int j = 0; j < 416; j++) {
+			GLfloat v = frame[i][j];
+			glColor3f(v / 255, v / 255, v / 255);
+			x = j * cos(angle*PI / 180);
+			y = 239 - i;
+			z = j * sin(angle*PI / 180);
+			glVertex3f(x, y, z);
+		}
+	}
+	if (angle == 0 || angle == 80)
+		angleInc *= -1;
+	angle += angleInc;
+	glEnd();
+	glFlush();
+	
+	
+}
+void timer(int t) {
+	glutPostRedisplay();
+	glutTimerFunc(delay, timer, t);
+}
+

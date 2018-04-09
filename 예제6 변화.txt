@@ -1,0 +1,92 @@
+// ConsoleApplication2.cpp: 콘솔 응용 프로그램의 진입점을 정의합니다.
+//
+#include "stdafx.h"
+#include<glut.h>
+#include<stdlib.h>
+#include<time.h>
+static int delay = 1;
+void init();
+void display();
+void timer(int);
+static float x[3], y[3];
+static float xinc[3], yinc[3];
+int main(int argc, char *argv[])
+{
+	glutInit(&argc, (char**)argv); // 초기화
+	glutInitWindowSize(500, 500); // 윈도우크기초기화(도화지크기)(실행하면 나오는 화면)
+	glutCreateWindow("Prog03 : Bouncing Pixel"); // 윈도우생성 
+	glutDisplayFunc(display);  // os가 언제 화면을 보여줄지(parameter를 그릴것)
+	glutTimerFunc(delay, timer, 0);
+
+	init(); // openGL 초기화
+	glutMainLoop(); // event queue에 어떤 event가 들어있는지 검사하는 loop시작
+	return 0;
+}
+
+void init() { // openGL 초기화
+	srand(time(0));
+	/*x[0] = rand() % 50;
+	y[0] = rand() % 50;
+	x[1] = rand() % 50;
+	y[1] = rand() % 50;
+	x[2] = rand() % 50;
+	y[2] = rand() % 50;
+	xinc[0] = (rand() % 10 + 1) / 100.0;
+	yinc[0] = (rand() % 10 + 1) / 100.0;
+	xinc[1] = (rand() % 10 + 1) / 100.0;
+	yinc[1] = (rand() % 10 + 1) / 100.0;
+	xinc[2] = (rand() % 10 + 1) / 100.0;
+	yinc[2] = (rand() % 10 + 1) / 100.0;*/
+	for (int i = 0; i < 3; i++) {
+		x[i] = rand() % 50; y[i] = rand() % 50;
+		xinc[i] = (rand() % 10 + 1) / 100.0;
+		yinc[i] = (rand() % 10 + 1) / 100.0;
+	}
+	printf("%f %f %f %f\n", x, y, xinc, yinc);
+	glClearColor(1.0, 1.0, 1.0, 1.0); // (r g b a(투명도)(1이 불투명)순서)(1이 최대값 가장 강한 색)
+									  //glColor3f(1.0, 0.0, 0.0); // 붓의 색 선택(1 0 0 --> 빨간색)
+	gluOrtho2D(0.0, 50.0, 0.0, 50.0); // 좌표계 크기 설정 (left,right,bottom,top)
+									  //화면에보이는 좌표 범위 
+}
+
+void display() {
+	glClear(GL_COLOR_BUFFER_BIT);
+	glColor3f((GLfloat)x[0] / 50.0, (GLfloat)y[0] / 50.0, 0);
+	glBegin(GL_TRIANGLES);
+	/*glVertex2f(x[0], y[0]);
+	glVertex2f(x[1], y[1]);
+	glVertex2f(x[2], y[2]);*/
+	for (int i = 0; i < 3; i++)
+		glVertex2f(x[i], y[i]);
+	/*	if (x[0] >= 50 || x[0])
+			xinc[0] = -xinc[0];
+		if (x[1] >= 50 || x[1] < 0)
+			xinc[1] = -xinc[1];
+		if (x[2] >= 50 || x[2] < 0)
+			xinc[2] = -xinc[2];
+		if (y[0] >= 50 || y[0] < 0)
+			yinc[0] = -yinc[0];
+		if (y[1] >= 50 || y[1] < 0)
+			yinc[1] = -yinc[1];
+		if (y[2] >= 50 || y[2] < 0)
+			yinc[2] = -yinc[2];
+		x[0] += xinc[0];
+		y[0] += yinc[0];
+		x[1] += xinc[1];
+		y[1] += yinc[1];
+		x[2] += xinc[2];
+		y[2] += yinc[2];*/
+	for (int i = 0; i < 3; i++) {
+		x[i] += xinc[i]; y[i] += yinc[i];
+		if (x[i] < 0 || x[i] >= 50) xinc[i] = -xinc[i];
+		if (y[i] < 0 || y[i] >= 50) yinc[i] = -yinc[i];
+	}
+
+	glEnd();
+	glFlush();
+}
+void timer(int t) {
+	glutPostRedisplay();
+	glutTimerFunc(delay, timer, t);
+}
+

@@ -1,0 +1,93 @@
+// ConsoleApplication2.cpp: 콘솔 응용 프로그램의 진입점을 정의합니다.
+//
+#include "stdafx.h"
+#include<glut.h>
+#include<stdlib.h>
+#include<time.h>
+static int delay = 1;
+void init();
+void display();
+void timer(int);
+static float x[3], y[3];
+static float xinc[3], yinc[3];
+int main(int argc, char *argv[])
+{
+	glutInit(&argc, (char**)argv); // 초기화
+	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
+	glutInitWindowSize(500, 500); // 윈도우크기초기화(도화지크기)(실행하면 나오는 화면)
+	glutCreateWindow("Prog03 : Bouncing Pixel"); // 윈도우생성 
+	glutDisplayFunc(display);  // os가 언제 화면을 보여줄지(parameter를 그릴것)
+	glutTimerFunc(delay, timer, 0);
+
+	init(); // openGL 초기화
+	glutMainLoop(); // event queue에 어떤 event가 들어있는지 검사하는 loop시작
+	return 0;
+}
+
+void init() { // openGL 초기화
+	srand(time(0));
+	/*x[0] = rand() % 50;
+	y[0] = rand() % 50;
+	x[1] = rand() % 50;
+	y[1] = rand() % 50;
+	x[2] = rand() % 50;
+	y[2] = rand() % 50;
+	xinc[0] = (rand() % 10 + 1) / 100.0;
+	yinc[0] = (rand() % 10 + 1) / 100.0;
+	xinc[1] = (rand() % 10 + 1) / 100.0;
+	yinc[1] = (rand() % 10 + 1) / 100.0;
+	xinc[2] = (rand() % 10 + 1) / 100.0;
+	yinc[2] = (rand() % 10 + 1) / 100.0;*/
+	for (int i = 0; i < 3; i++) {
+		x[i] = rand() % 50; y[i] = rand() % 50;
+		xinc[i] = (rand() % 10 + 1) / 100.0;
+		yinc[i] = (rand() % 10 + 1) / 100.0;
+	}
+	printf("%f %f %f %f\n", x, y, xinc, yinc);
+	glClearColor(1.0, 1.0, 1.0, 1.0); // (r g b a(투명도)(1이 불투명)순서)(1이 최대값 가장 강한 색)
+									  //glColor3f(1.0, 0.0, 0.0); // 붓의 색 선택(1 0 0 --> 빨간색)
+	glOrtho(0.0, 50.0, 0.0, 50.0, -50.0, 50.0); // 좌표계 크기 설정 (left,right,bottom,top)
+									  //화면에보이는 좌표 범위 
+	glEnable(GL_DEPTH_TEST);   // 테스트한 결과는 DEPTH_BUFFER에 저장된다.
+}
+
+void display() {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	glColor3f(1.0, 0.0, 0.0);
+	glBegin(GL_POLYGON);
+	glVertex3f(15, 15, 35); glVertex3f(35, 15, 35); glVertex3f(35, 35, 35); glVertex3f(15, 35, 35);
+	glEnd();
+	
+	glColor3f(0.0, 1.0, 0.0);
+	glBegin(GL_POLYGON);
+	glVertex3f(15, 15, 35); glVertex3f(20,20,15); glVertex3f(40,20,15); glVertex3f(35,15,35);
+	glEnd();
+
+	glColor3f(0.0, 0.0, 1.0);
+	glBegin(GL_POLYGON);
+	glVertex3f(15,35,35); glVertex3f(20,40,15); glVertex3f(20,20,15); glVertex3f(15,15,35);
+	glEnd();
+
+	glColor3f(1.0, 1.0, 0.0);
+	glBegin(GL_POLYGON);
+	glVertex3f(15,35,35); glVertex3f(35, 35, 35); glVertex3f(40,40,15); glVertex3f(20,40,15);
+	glEnd();
+
+	glColor3f(1.0, 0.0, 1.0);
+	glBegin(GL_POLYGON);
+	glVertex3f(35,35,35); glVertex3f(35,15,35); glVertex3f(40,20,15); glVertex3f(40,40,15);
+	glEnd();
+
+	glColor3f(0.0, 1.0, 1.0);
+	glBegin(GL_POLYGON);
+	glVertex3f(20,40,15); glVertex3f(40,40,15); glVertex3f(40,20,15); glVertex3f(20,20,15);
+	glEnd();
+
+	glFlush();
+}
+void timer(int t) {
+	glutPostRedisplay();
+	glutTimerFunc(delay, timer, t);
+}
+

@@ -1,0 +1,84 @@
+#include "stdafx.h"
+#include<glut.h>
+#include<stdlib.h>
+#include<time.h>
+#include<math.h>
+static int Day = 0, Time = 0;
+static int delay = 1;
+void display();
+void init();
+void timer(int);
+
+int main(int argc, char* argv[])
+{
+	glutInit(&argc, (char**)argv);
+	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+	glutInitWindowSize(500, 500);
+	glutCreateWindow("Sun Earth Moon");
+	glutDisplayFunc(display);
+	glutTimerFunc(delay, timer, 1); // 타이머함수실행
+	init(); // openGL 초기화
+	glutMainLoop(); // event queue에 어떤 event가 들어있는지 검사하는 loop시작
+	return 0;
+}
+
+void init() // openGL 초기화
+{
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity(); // 정방행렬 = 단위행렬 
+	glClearColor(1.0, 1.0, 1.0, 1.0);  //  (r g b a(투명도)(1이 불투명)순서)(1이 최대값 가장 강한 색)
+									   //glColor3f(1.0, 0.0, 0.0); // 붓의 색 선택(1 0 0 --> 빨간색)
+	glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0); // 좌표계 크기 설정 (left,right,bottom,top) 화면에 보이는 좌표 범위
+	glEnable(GL_DEPTH_TEST);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glMatrixMode(GL_MODELVIEW);
+}
+
+void display()
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glLoadIdentity(); // 이게 없으면 2도 회전된 행렬에 또 4도 회전 6도 회전..
+
+	glColor3f(1.0, 0.3, 0.3);
+	glutWireSphere(0.2, 20, 16);  //태양
+
+	glPushMatrix();
+	//printf("%d", Day);
+	glRotatef((GLfloat)Day * 360.0 / 365.0, 0.0, 1.0, 0.0);       // 원점으로 부터 Day만큼 회전
+	glTranslatef(0.7, 0.0, 0.0);								 // Day만큼 회전된 상태에서 x축으로 0.7만큼이동
+	glRotatef((GLfloat)-Day * 360.0 / 365.0, 0.0, 1.0, 0.0);	 // x축이동한 좌표에서 원점에서의 방향으로 복귀
+
+	glPushMatrix();
+	glRotatef(-23.5, 0.0, 0.0, 1.0);							//자전축
+	glRotatef((GLfloat)Time * 360 / 24, 0, 1.0, 0.0);
+
+	glColor3f(0.5, 0.6, 0.7);
+	glutWireSphere(0.1, 10, 8); 	//지구	
+
+	glPopMatrix();
+	glPushMatrix();
+
+	glRotatef(5, 0.0, 0.0, 1.0);							// 달 백도?
+	glRotatef((GLfloat)Time * 360 / 24, 0, 1, 0.0);
+	glTranslatef(0.2, 0.0, 0.0);
+
+	glColor3f(0.9, 0.8, 0.2);
+	glutWireSphere(0.04, 10, 8);   //달
+
+	glPopMatrix();
+	glPopMatrix();
+	glutSwapBuffers();
+	glFlush();
+}
+
+void timer(int t)
+{
+	Time++;
+	if (Time == 24) {
+		Day++;
+		Time = 0;
+	}
+	glutPostRedisplay();
+	glutTimerFunc(delay, timer, 1);
+
+}

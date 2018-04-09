@@ -1,0 +1,59 @@
+// ConsoleApplication2.cpp: 콘솔 응용 프로그램의 진입점을 정의합니다.
+//
+#include "stdafx.h"
+#include<glut.h>
+#include<stdlib.h>
+#include<time.h>
+static int delay = 1;
+void init();
+void display();
+void timer(int);	
+float x, y;
+float xinc, yinc;
+int main(int argc, char *argv[])
+{
+	glutInit(&argc, (char**)argv); // 초기화
+	glutInitWindowSize(500, 500); // 윈도우크기초기화(도화지크기)(실행하면 나오는 화면)
+	glutCreateWindow("Prog03 : Bouncing Pixel"); // 윈도우생성 
+	glutDisplayFunc(display);  // os가 언제 화면을 보여줄지(parameter를 그릴것)
+	glutTimerFunc(delay, timer, 0);
+
+	init(); // openGL 초기화
+	glutMainLoop(); // event queue에 어떤 event가 들어있는지 검사하는 loop시작
+	return 0;
+}
+
+void init() { // openGL 초기화
+	srand(time(0));
+	x = rand() % 50;
+	y = rand() % 50;
+	xinc = (rand() % 10 + 1) / 100.0;
+	yinc = (rand() % 10 + 1) / 100.0;
+	printf("%f %f %f %f\n", x, y, xinc, yinc);
+	glClearColor(1.0, 1.0, 1.0, 1.0); // (r g b a(투명도)(1이 불투명)순서)(1이 최대값 가장 강한 색)
+	//glColor3f(1.0, 0.0, 0.0); // 붓의 색 선택(1 0 0 --> 빨간색)
+	gluOrtho2D(0.0, 50.0, 0.0, 50.0); // 좌표계 크기 설정 (left,right,bottom,top)
+	//화면에보이는 좌표 범위 
+	glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void display() {
+	glColor3f((GLfloat)x / 50, (GLfloat)y / 50, 0);
+	glBegin(GL_POINTS);
+	//glVertex2f(x1, y1);
+	glVertex2f(x, y);
+	if (x >= 50 || x <= 0)
+		xinc = -xinc;
+	if (y >= 50 || y <= 0)
+		yinc = -yinc;
+	x += xinc;
+	y += yinc;
+
+	glEnd();
+	glFlush(); 
+}
+void timer(int t) {
+	glutPostRedisplay();
+	glutTimerFunc(delay, timer, t);
+}
+

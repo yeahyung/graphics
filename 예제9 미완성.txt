@@ -1,0 +1,167 @@
+// ConsoleApplication2.cpp: 콘솔 응용 프로그램의 진입점을 정의합니다.
+//
+#include "stdafx.h"
+#include<glut.h>
+#include<stdlib.h>
+#include<time.h>
+#include<math.h>
+static int delay = 1;
+#define PI 3.141592
+void init();
+void display();
+void timer(int);
+static float x[3], y[3];
+static float xinc[3], yinc[3];
+int main(int argc, char *argv[])
+{
+	glutInit(&argc, (char**)argv); // 초기화
+	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
+	glutInitWindowSize(500, 500); // 윈도우크기초기화(도화지크기)(실행하면 나오는 화면)
+	glutCreateWindow("Prog03 : Bouncing Pixel"); // 윈도우생성 
+	glutDisplayFunc(display);  // os가 언제 화면을 보여줄지(parameter를 그릴것)
+	//glutTimerFunc(delay, timer, 0);
+
+	init(); // openGL 초기화
+	glutMainLoop(); // event queue에 어떤 event가 들어있는지 검사하는 loop시작
+
+	return 0;
+}
+
+void init() { // openGL 초기화
+	//srand(time(0));
+
+	glClearColor(1.0, 1.0, 1.0, 1.0); // (r g b a(투명도)(1이 불투명)순서)(1이 최대값 가장 강한 색)
+									  //glColor3f(1.0, 0.0, 0.0); // 붓의 색 선택(1 0 0 --> 빨간색)
+	glOrtho(-2, 2, -2, 2, -2, 2); // 좌표계 크기 설정 (left,right,bottom,top)
+									  //화면에보이는 좌표 범위 
+	//glEnable(GL_DEPTH_TEST);   // 테스트한 결과는 DEPTH_BUFFER에 저장된다.
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+}
+
+void display() {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glBegin(GL_TRIANGLE_FAN);
+	glVertex3f(0, 0, 1);
+	glVertex3f(0, cos(160 * PI / 180), sin(160 * PI / 180));
+	for (int i = -180; i <= 180; i += 20) {
+		glColor3f(abs(i) / (double)180, 0, 0);
+		glVertex3f(sin(((double)i + 20)*PI / 180) * cos(160 * PI / 180), cos(((double)i + 20)*PI / 180) * cos(160 * PI / 180), sin(160 * PI / 180));
+	}
+	glEnd();
+
+
+	glBegin(GL_TRIANGLE_FAN);
+	glVertex3f(0, 0, -1);
+	glVertex3f(0, cos(160 * PI / 180), -sin(160 * PI / 180));
+	for (int i = -180; i <= 180; i += 20) {
+		glColor3f(abs(i) / (double)180, 0, 0);
+		glVertex3f(sin(((double)i + 20)*PI / 180) * cos(160 * PI / 180), cos(((double)i + 20)*PI / 180) * cos(160 * PI / 180), sin(160 * PI / 180));
+	}
+	glEnd();
+
+	for (int i = -180; i <= 180; i += 20) {
+		for (int j = -80; j <= 80; j += 20) {
+			glBegin(GL_QUAD_STRIP);
+			glColor3f(abs(i) / (double)180, 0, 0);
+			glVertex3f(sin((double)i*PI / 180) * cos((double)j * PI / 180), cos((double)i*PI / 180) * cos((double)j * PI / 180), sin((double)j * PI / 180));
+			glVertex3f(sin((double)i*PI / 180) * cos(((double)j + 20) * PI / 180), cos((double)i*PI / 180) * cos(((double)j + 20) * PI / 180), sin(((double)j + 20) * PI / 180));
+			glVertex3f(sin(((double)i - 20)*PI / 180) * cos((double)j * PI / 180), cos(((double)i - 20)*PI / 180) * cos((double)j * PI / 180), sin((double)j * PI / 180));
+			glVertex3f(sin(((double)i - 20)*PI / 180) * cos(((double)j + 20) * PI / 180), cos(((double)i - 20)*PI / 180) * cos(((double)j + 20) * PI / 180), sin(((double)j + 20) * PI / 180));
+			glEnd();
+		}
+	}
+	glFlush();
+
+}
+void timer(int t) {
+	glutPostRedisplay();
+	glutTimerFunc(delay, timer, t);
+}
+
+// ConsoleApplication2.cpp: 콘솔 응용 프로그램의 진입점을 정의합니다.
+//
+#include "stdafx.h"
+#include<glut.h>
+#include<stdlib.h>
+#include<time.h>
+#include<math.h>
+static int delay = 1;
+#define PI 3.141592
+void init();
+void display();
+void timer(int);
+static float x[3], y[3];
+static float xinc[3], yinc[3];
+int main(int argc, char *argv[])
+{
+	glutInit(&argc, (char**)argv); // 초기화
+	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
+	glutInitWindowSize(500, 500); // 윈도우크기초기화(도화지크기)(실행하면 나오는 화면)
+	glutCreateWindow("Prog03 : Bouncing Pixel"); // 윈도우생성 
+	glutDisplayFunc(display);  // os가 언제 화면을 보여줄지(parameter를 그릴것)
+	//glutTimerFunc(delay, timer, 0);
+
+	init(); // openGL 초기화
+	glutMainLoop(); // event queue에 어떤 event가 들어있는지 검사하는 loop시작
+
+	return 0;
+}
+
+void init() { // openGL 초기화
+	//srand(time(0));
+
+	glClearColor(1.0, 1.0, 1.0, 1.0); // (r g b a(투명도)(1이 불투명)순서)(1이 최대값 가장 강한 색)
+									  //glColor3f(1.0, 0.0, 0.0); // 붓의 색 선택(1 0 0 --> 빨간색)
+	glOrtho(-2, 2, -2, 2, -2, 2); // 좌표계 크기 설정 (left,right,bottom,top)
+									  //화면에보이는 좌표 범위 
+	glEnable(GL_DEPTH_TEST);   // 테스트한 결과는 DEPTH_BUFFER에 저장된다.
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+}
+
+void display() {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glBegin(GL_TRIANGLE_FAN);
+	glVertex3f(0, 0, 1);
+	glVertex3f(0, cos(80 * PI / 180), sin(80 * PI / 180));
+	for (int i = -180; i <= 180; i += 20) {      // i == 세타 == 경도 == 가로각도
+		glColor3f((double)abs(i) / 180.0, 0, 0);
+		glVertex3f(sin(((double)i)*PI / 180) * cos(80 * PI / 180), cos(((double)i)*PI / 180) * cos(80 * PI / 180), sin(80 * PI / 180));
+	}
+	glEnd();
+	glFlush();
+
+	glBegin(GL_TRIANGLE_FAN);
+	glVertex3f(0, 0, -1);
+	glVertex3f(0, cos(-80 * PI / 180), sin(-80 * PI / 180));
+	for (int i = -180; i <= 180; i += 20) {
+		glColor3f((double)abs(i) / 180.0, 0, 0);
+		glVertex3f(sin(((double)i)*PI / 180) * cos(-80 * PI / 180), cos(((double)i)*PI / 180) * cos(-80 * PI / 180), sin(-80 * PI / 180));
+	}
+	glEnd();
+	glFlush();
+
+
+	for (int i = -80; i <= 80; i += 20) {	
+		glBegin(GL_QUAD_STRIP);	
+		
+		glVertex3f(0, cos((double)i*PI / 180), sin((double)i*PI));
+		glVertex3f(sin(20*PI / 180)*cos((double)i*PI / 180), cos(20*PI / 180)*cos((double)i*PI/180) , sin((double)i*PI/180));
+		//J 처리 J = 0
+		
+		for (int j = -180; j <= 180; j += 20) {
+			glColor3f((double)abs(j) / 180.0, 0, 0);
+			glVertex3f(sin((double)i*PI / 180) * cos(((double)j + 20) * PI / 180), cos((double)i*PI / 180) * cos(((double)j + 20) * PI / 180), sin(((double)j + 20) * PI / 180));
+			glVertex3f(sin(((double)i + 20)*PI / 180) * cos(((double)j + 20) * PI / 180), cos(((double)i + 20)*PI / 180) * cos(((double)j + 20) * PI / 180), sin(((double)j + 20) * PI / 180));
+		}
+		glEnd();
+	}
+	glFlush();
+
+}
+void timer(int t) {
+	glutPostRedisplay();
+	glutTimerFunc(delay, timer, t);
+}
+
