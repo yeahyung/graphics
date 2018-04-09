@@ -1,38 +1,32 @@
-mouse down event
-¸¶¿ì½º ÁÂÇ¥(¸Å°³º¯¼ö·Î ³Ñ¾î¿È)
-µå·¡±× ÇØ¼­ ÀÌµ¿½Ã mouse up event¹ß»ı ÁÂÇ¥
 
-¸¶¿ì½º ÁÂÇ¥ º¯È­ ±æÀÌ¸¸Å­ È¸Àü
-
-// ConsoleApplication2.cpp: ÄÜ¼Ö ÀÀ¿ë ÇÁ·Î±×·¥ÀÇ ÁøÀÔÁ¡À» Á¤ÀÇÇÕ´Ï´Ù.
+// ConsoleApplication2.cpp: ì½˜ì†” ì‘ìš© í”„ë¡œê·¸ë¨ì˜ ì§„ì…ì ì„ ì •ì˜í•©ë‹ˆë‹¤.
 //
 #include "stdafx.h"
 #include<glut.h>
 #include<stdlib.h>
 #include<time.h>
 #include<math.h>
-static int delay = 10;
+static int delay = 10, z = 200;
 static GLfloat theta[3] = { 0.0,0.0,0.0 }, scale = 1.0;
 static int axis = 1, count = 0;
-GLfloat xcoor = 150.0, ycoor = 150.0,size=200;
 GLfloat vertices[][3] = { { -1,-1,-1 },{ 1,-1,-1 },{ 1,1,-1 },{ -1,1,-1 },
 { -1,-1,1 },{ 1,-1,1 },{ 1,1,1 } ,{ -1,1,1 } };
 GLfloat color[][3] = { { 0,0,0 },{ 1,0,0 },{ 1,1,0 },{ 0,1,0 },{ 0,0,1 },
 { 1,0,1 },{ 1,1,1 },{ 0.1,1 } };
-GLfloat eye[3] = { 0,0,1}, at[3] = { 0,0,0 }, up[3] = { 0,1,0 };
+GLfloat eye[3] = { 0,0,1 }, at[3] = { 0,0,0 }, up[3] = { 0,1,0 };
 
 
-void init() { // openGL ÃÊ±âÈ­
+void init() { // openGL ì´ˆê¸°í™”
 			  //srand(time(0));
 	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity(); // Á¤¹æÇà·Ä = ´ÜÀ§Çà·Ä
-	glClearColor(1.0, 1.0, 1.0, 1.0); // (r g b a(Åõ¸íµµ)(1ÀÌ ºÒÅõ¸í)¼ø¼­)(1ÀÌ ÃÖ´ë°ª °¡Àå °­ÇÑ »ö)
-	glColor3f(0.0, 0.0, 1.0); // º×ÀÇ »ö ¼±ÅÃ(1 0 0 --> »¡°£»ö)
-	glOrtho(-180, 180, -180, 180, -200, 200); // ÁÂÇ¥°è Å©±â ¼³Á¤ (left,right,bottom,top)
-									//È­¸é¿¡º¸ÀÌ´Â ÁÂÇ¥ ¹üÀ§ 
-	//glFrustum(-2.0, 2.0, -2.0, 2.0, 2.0, 20.0);
+	glLoadIdentity(); // ì •ë°©í–‰ë ¬ = ë‹¨ìœ„í–‰ë ¬
+	glClearColor(1.0, 1.0, 1.0, 1.0); // (r g b a(íˆ¬ëª…ë„)(1ì´ ë¶ˆíˆ¬ëª…)ìˆœì„œ)(1ì´ ìµœëŒ€ê°’ ê°€ì¥ ê°•í•œ ìƒ‰)
+	glColor3f(0.0, 0.0, 1.0); // ë¶“ì˜ ìƒ‰ ì„ íƒ(1 0 0 --> ë¹¨ê°„ìƒ‰)
+	glOrtho(-200,200,-200,200,-200,200); // ì¢Œí‘œê³„ í¬ê¸° ì„¤ì • (left,right,bottom,top)
+									//í™”ë©´ì—ë³´ì´ëŠ” ì¢Œí‘œ ë²”ìœ„ 
+	//glFrustum(-150, 150, -150, 150, -500, 500);
 	//gluPerspective(85.0, 1.0, 2.0, 20.0);
-	glEnable(GL_DEPTH_TEST);   // Å×½ºÆ®ÇÑ °á°ú´Â DEPTH_BUFFER¿¡ ÀúÀåµÈ´Ù.
+	glEnable(GL_DEPTH_TEST);   // í…ŒìŠ¤íŠ¸í•œ ê²°ê³¼ëŠ” DEPTH_BUFFERì— ì €ì¥ëœë‹¤.
 							   //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glMatrixMode(GL_MODELVIEW);
 }
@@ -52,14 +46,14 @@ void polygon(int a, int b, int c, int d) {
 void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glLoadIdentity();		// ÀÌ°Ô ¾øÀ¸¸é 2µµ È¸ÀüµÈ Çà·Ä¿¡ ¶Ç 4µµ È¸Àü 6µµ È¸Àü..
-	//gluLookAt(eye[0], eye[1], eye[2], at[0], at[1], at[2], up[0], up[1], up[2]);
-	//glRotatef(theta[0], 1.0, 0, 0); //theta¸¸Å­ yÃà ±âÁØÀ¸·Î È¸Àü
-	//glRotatef(theta[1], 0, 1.0, 0);
-	//glRotatef(theta[2], 0, 0, 1);
+	glLoadIdentity();		// ì´ê²Œ ì—†ìœ¼ë©´ 2ë„ íšŒì „ëœ í–‰ë ¬ì— ë˜ 4ë„ íšŒì „ 6ë„ íšŒì „..
+							//gluLookAt(eye[0], eye[1], eye[2], at[0], at[1], at[2], up[0], up[1], up[2]);
+							//glRotatef(theta[0], 1.0, 0, 0); //thetaë§Œí¼ yì¶• ê¸°ì¤€ìœ¼ë¡œ íšŒì „
+							//glRotatef(theta[1], 0, 1.0, 0);
+							//glRotatef(theta[2], 0, 0, 1);
 	gluLookAt(eye[0], eye[1], eye[2], at[0], at[1], at[2], up[0], up[1], up[2]);
-	glViewport(xcoor, ycoor, size,size);
-	glutWireTeapot(100); 
+	glViewport(150, 150, 200, 200);
+	glutWireTeapot(100);
 
 	glFlush();
 }
@@ -70,28 +64,35 @@ void timer(int t) {
 	glutTimerFunc(delay, timer, t);
 }
 
-void keyboard_handler(unsigned char key, int x, int y) { 
-	if (key == 'a') {
-		xcoor -= 1;	
+void keyboard_handler(unsigned char key, int x, int y) {
+	if (key == 'a') {       //ì™¼ìª½ì´ë™ -> ë¬¼ì²´ ì˜¤ë¥¸ìª½
+		eye[0]--;
+		at[0]--;
 	}
-	if (key == 'd') {
-		xcoor += 1;
+	if (key == 'd') {      // ì˜¤ë¥¸ìª½ì´ë™-> ë¬¼ì²´ ì™¼ìª½
+		eye[0]++;
+		at[0]++;
 	}
-	if (key == 'w') {
-		size += 1;
-		//xcoor--;
-		//ycoor--;
+	if (key == 'w') {        // ì•ìœ¼ë¡œ->ë¬¼ì²´í¬ê²Œ
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		z--;
+		glOrtho(-z, z, -z, z, -z, z);
+		glMatrixMode(GL_MODELVIEW);
 	}
-	if (key == 's') {
-		size -= 1;
-		//xcoor++;
-		//ycoor++;
+	if (key == 's') {       //ë’¤ë¡œê° ->ë¬¼ì²´ ì‘ê²Œë³´ì„
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		z++;
+		glOrtho(-z, z, -z, z, -z, z);
+		glMatrixMode(GL_MODELVIEW);
 	}
 
+	glutPostRedisplay();
 }
 
 
-void mouse_handler(int btn, int state, int x, int y) { // x,y ¸¶¿ì½ºÆ÷ÀÎÅÍ À§Ä¡ÁÂÇ¥
+void mouse_handler(int btn, int state, int x, int y) { // x,y ë§ˆìš°ìŠ¤í¬ì¸í„° ìœ„ì¹˜ì¢Œí‘œ
 	if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 		axis = 0;
 	if (btn == GLUT_MIDDLE_BUTTON && state == GLUT_DOWN)
@@ -102,18 +103,18 @@ void mouse_handler(int btn, int state, int x, int y) { // x,y ¸¶¿ì½ºÆ÷ÀÎÅÍ À§Ä¡Á
 
 int main(int argc, char *argv[])
 {
-	glutInit(&argc, (char**)argv); // ÃÊ±âÈ­
+	glutInit(&argc, (char**)argv); // ì´ˆê¸°í™”
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
-	glutInitWindowSize(500, 500); // À©µµ¿ìÅ©±âÃÊ±âÈ­(µµÈ­ÁöÅ©±â)(½ÇÇàÇÏ¸é ³ª¿À´Â È­¸é)
-	glutCreateWindow("Prog03 : Bouncing Pixel"); // À©µµ¿ì»ı¼º 
+	glutInitWindowSize(500, 500); // ìœˆë„ìš°í¬ê¸°ì´ˆê¸°í™”(ë„í™”ì§€í¬ê¸°)(ì‹¤í–‰í•˜ë©´ ë‚˜ì˜¤ëŠ” í™”ë©´)
+	glutCreateWindow("Prog03 : Bouncing Pixel"); // ìœˆë„ìš°ìƒì„± 
 												 //glutIdleFunc(spin_cube);
 	glutKeyboardFunc(keyboard_handler);
 	glutMouseFunc(mouse_handler);
-	glutDisplayFunc(display);  // os°¡ ¾ğÁ¦ È­¸éÀ» º¸¿©ÁÙÁö(parameter¸¦ ±×¸±°Í)
-	glutTimerFunc(delay, timer, 0);
+	glutDisplayFunc(display);  // osê°€ ì–¸ì œ í™”ë©´ì„ ë³´ì—¬ì¤„ì§€(parameterë¥¼ ê·¸ë¦´ê²ƒ)
+	//glutTimerFunc(delay, timer, 0);
 
-	init(); // openGL ÃÊ±âÈ­
-	glutMainLoop(); // event queue¿¡ ¾î¶² event°¡ µé¾îÀÖ´ÂÁö °Ë»çÇÏ´Â loop½ÃÀÛ
+	init(); // openGL ì´ˆê¸°í™”
+	glutMainLoop(); // event queueì— ì–´ë–¤ eventê°€ ë“¤ì–´ìˆëŠ”ì§€ ê²€ì‚¬í•˜ëŠ” loopì‹œì‘
 
 	return 0;
 }
