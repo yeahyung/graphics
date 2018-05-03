@@ -2,7 +2,7 @@
 #include <glut.h>
 #include<math.h>
 
-static int mode = 0, num = 0;
+static int mode = 0, num = 2;
 typedef struct {
 	GLfloat pos[4];
 	GLfloat amb[4];
@@ -66,40 +66,39 @@ void triangle(GLfloat* a, GLfloat* b, GLfloat* c, int count)
 	else
 		glBegin(GL_POLYGON);
 
-	while (count < num) {
-		count++;                        
-		GLfloat newver[3][3];
-
-		newver[0][0] = a[0] + b[0];
-		newver[0][1] = a[1] + b[1];
-		newver[0][2] = a[2] + b[2];
-		printf("befor vertex = %lf\n", newver[0][0]);
-		normal(newver[0]);
-		printf("after vertex = %lf\n", newver[0][0]);
-
-		newver[1][0] = a[0] + c[0];
-		newver[1][1] = a[1] + c[1];
-		newver[1][2] = a[2] + c[2];
-		normal(newver[1]);
-
-		newver[2][0] = c[0] + b[0];
-		newver[2][1] = c[1] + b[1];
-		newver[2][2] = c[2] + b[2];
-		normal(newver[2]);
-
-		triangle(a, newver[0], newver[1], count);
-		triangle(c, newver[1], newver[2], count);
-		triangle(b, newver[2], newver[0], count);
-		triangle(newver[0], newver[2], newver[1], count);
-	}
+	GLfloat newver[3][3];	
+	if(count==num) {
 	glNormal3fv(a);
 	glVertex3fv(a);
 	glNormal3fv(b);
 	glVertex3fv(b);
 	glNormal3fv(c);
 	glVertex3fv(c);
-	glEnd();
+}
+	else {
+		count++;
+		newver[0][0] = a[0] + b[0];
+		newver[0][1] = a[1] + b[1];
+		newver[0][2] = a[2] + b[2];
+		normal(newver[0]); // v1
 
+		newver[1][0] = a[0] + c[0];
+		newver[1][1] = a[1] + c[1];
+		newver[1][2] = a[2] + c[2];
+		normal(newver[1]); // v2
+
+		newver[2][0] = b[0] + c[0];
+		newver[2][1] = b[1] + c[1];
+		newver[2][2] = b[2] + c[2];
+		normal(newver[2]); // v3
+
+		triangle(a, newver[0], newver[1], count);
+		triangle(c, newver[1], newver[2], count);
+		triangle(b, newver[2], newver[0], count);
+		triangle(newver[0], newver[2], newver[1], count);
+	}
+
+	glEnd();
 }
 
 void keyboard_handler(unsigned char key, int x, int y)
@@ -127,7 +126,8 @@ void keyboard_handler(unsigned char key, int x, int y)
 		if (num > 0)
 			num--;
 	if (key == 'N') // change max recursive level by +1
-		num++;
+		if (num < 7)
+			num++;
 	glutPostRedisplay();
 }
 
@@ -145,11 +145,6 @@ void display()
 	triangle(vertices[0], vertices[3], vertices[1], 0);
 	triangle(vertices[0], vertices[2], vertices[3], 0);
 
-	glLoadIdentity();
-	glMaterialfv(GL_FRONT, GL_AMBIENT, mat.amb);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, mat.dif);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, mat.spe);
-	glMaterialf(GL_FRONT, GL_SHININESS, mat.shi);
 	glTranslatef(light.pos[0], light.pos[1], light.pos[2]);
 	glutSolidSphere(0.1, 10, 10);
 
@@ -171,6 +166,5 @@ int main(int argc, char* argv[])
 
 	init();
 	glutMainLoop();
-
 	return 0;
 }
